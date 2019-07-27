@@ -83,42 +83,34 @@ My final model consisted of the following layers:
 |Convolution 1     	| kernel 3x3x16, 1x1 stride, same padding, outputs 32x32x16 	|
 |Batch Normalization
 |RELU					|												|
-|Dropout   | keep_prob 0.8 |
 |Max pooling	      	| kernel 2x2x16, 1x1 stride,  same padding, outputs 32x32x16 				|
 |Convolution 2     	| kernel 3x3x16, 1x1 stride, same padding, outputs 32x32x16 	|
 |Batch Normalization
 |RELU					|												|
-|Dropout  | keep_prob 0.8
 |Max pooling	      	| kernel 2x2x16, 1x1 stride,  same padding, outputs 32x32x16 				|
 |Convolution 3    	| kernel 3x3x32, 1x1 stride, same padding, outputs 32x32x32 	|
 |Batch Normalization
 |RELU					|												|
-|Dropout  | keep_prob 0.8   |
 |Max pooling	      	| kernel 2x2x32, 1x1 stride,  same padding, outputs 32x32x32 				|
 |Convolution 4     	| kernel 5x5x32, 1x1 stride, same padding, outputs 32x32x32 	|
 |Batch Normalization
 |RELU					|												|
-|Dropout  | keep_prob 0.8 |
 |Max pooling	      	| kernel 2x2x32, 1x1 stride,  same padding, outputs 32x32x32 				|
 |Convolution 5     	| kernel 5x5x64, 1x1 stride, same padding, outputs 32x32x64 	|
 |Batch Normalization
 |RELU					|												|
-|Dropout  | keep_prob 0.8 |
 |Max pooling	      	| kernel 2x2x64, 2x2 stride,  valid padding, outputs 16x16x64 				|
 |Convolution 6     	| kernel 5x5x64, 1x1 stride, same padding, outputs 16x16x64 	|
 |Batch Normalization
 |RELU					|												|
-|Dropout  | keep_prob 0.8 |
 |Max pooling	      	| kernel 2x2x64, 2x2 stride,  valid padding, outputs 8x8x64 				|
 | Convolution 7    	| kernel 3x3x128, 1x1 stride, same padding, outputs 8x8x128 	|
 |Batch Normalization
 |RELU					|												|
-|Dropout  | keep_prob 0.8 |
 |Max pooling	      	| kernel 2x2x128, 2x2 stride,  valid padding, outputs 4x4x128 				|
 |Convolution 8     	| kernel 3x3x256, 1x1 stride, same padding, outputs 4x4x256 	|
 |Batch Normalization
 |RELU					|												|
-|Dropout  | keep_prob 0.8 |
 |Max pooling	      	| kernel 2x2x256, 2x2 stride,  valid padding, outputs 2x2x256 				|
 |Flatten    |      									|
 |Fully connected 1		| units 256       									|
@@ -137,12 +129,12 @@ My final model consisted of the following layers:
 
   My training setup is 
 
-batch size : 128
+batch size : 64
 epochs : 1000
 optimizer : Adam
-learning rate : 0.001
+learning rate : 0.0005
 loss function : cross entropy loss
-early stopping crateria : validation accuracy >= 99%
+early stopping crateria : validation accuracy >= 98.8%
 
 
 
@@ -151,9 +143,10 @@ early stopping crateria : validation accuracy >= 99%
 My final model results were:
 
 training set accuracy of 100% 
-validation set accuracy of 99%
-test set accuracy of 97.2%
-early stop at epoch 221
+validation set accuracy of 98.8%
+test set accuracy of 97%
+early stop at epoch 999
+
 
 * What was the first architecture that was tried and why was it chosen?
 
@@ -199,11 +192,11 @@ I download the latest version of final test images from German traffic sign webs
 
 Numbers of all final test images is 12630.
 
-I pickup 5 images randomly, shows below:
+I pickup 5 images randomly, and print out their labels as tiltes, shows below:
 
 ![alt text][image5] 
 
-The second image might be difficult to classify because the image's backgroup light is too dark, the traffic sign's edge is blur and could not identify it by bear eyes.
+The first image might be difficult to classify because the image's backgroup light is too dark, the traffic sign's edge is blur and could not identify it by bear eyes.
 
 #### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
@@ -211,16 +204,16 @@ Here are the results of the prediction:
 
 | Image			        |     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Priority road     		| Priority road  									| 
+| Priority road       			| Priority road  										|
+| General caution					| General caution											|
+| Speed limit (30km/h)	      		| Speed limit (30km/h)					 				|
+| Wild animals crossing			| Wild animals crossing    							|
 
-Images with label show blow:
+Images with predicted labels show blow:
 ![alt text][image6]
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess 5 of the 5 traffic signs, which gives an accuracy of 100%. 
 
 #### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
@@ -238,6 +231,45 @@ For the first image, the model is relatively sure that this is a stop sign (prob
 
 
 For the second image ... 
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| .60         			| Stop sign   									| 
+| .20     				| U-turn 										|
+| .05					| Yield											|
+| .04	      			| Bumpy Road					 				|
+| .01				    | Slippery Road      							|
+
+For the third image ... 
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| .60         			| Stop sign   									| 
+| .20     				| U-turn 										|
+| .05					| Yield											|
+| .04	      			| Bumpy Road					 				|
+| .01				    | Slippery Road      							|
+
+For the fourth image ... 
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| .60         			| Stop sign   									| 
+| .20     				| U-turn 										|
+| .05					| Yield											|
+| .04	      			| Bumpy Road					 				|
+| .01				    | Slippery Road      							|
+
+For the fifth image ... 
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| .60         			| Stop sign   									| 
+| .20     				| U-turn 										|
+| .05					| Yield											|
+| .04	      			| Bumpy Road					 				|
+| .01				    | Slippery Road      							|
+
 
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
 #### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
