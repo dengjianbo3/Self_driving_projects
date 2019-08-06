@@ -11,9 +11,13 @@ This repositroy contains require projects of Udacity self driving car engineer n
 [image1]: ./P1-LaneLines/test_videos_output/gifhome_640x360_15s.gif "P1 result git"
 ![alt text][image1]
 
+By using opencv, cut out the interest region frame to frame from the central camera on the vehicle, by using thresholding and hough transformation, detect and highlight lane lines on the road.
+
 ### P2 - Lane line detection with opencv
 [image2]: ./P2-Advanced-Lane-Lines/output_video/gifhome_640x360_20s.gif "P2 result git"
 ![alt text][image2]
+
+Base on undistorted images after camera calibration, apply some thresholding methods like gradient thresholding, warp the interest region by using perspective transform techniques, and fit left and right lane line as two second polynomial line and draw lane line region on warped image then warp back onto the original image. In the mean time calculate the curvature and center position respect to the lane line. 
 
 ### P3 - Traffic sign classifier
 [image3]: ./P3-Traffic-Sign-Classifier/examples/final_test_images.png "P3 test"
