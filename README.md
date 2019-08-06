@@ -8,7 +8,7 @@ This repositroy contains require projects of Udacity self driving car engineer n
 
 ### P1 - Basic lane line detection
 
-[image1]: ./P1-LaneLines/test_videos_output/gifhome_960x540_15s.gif "P1 result git"
+[image1]: ./P1-LaneLines/test_videos_output/gifhome_640x360_15s.gif "P1 result git"
 ![alt text][image1]
 
 ### P2 - Lane line detection with opencv
