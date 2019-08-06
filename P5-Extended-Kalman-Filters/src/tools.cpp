@@ -59,7 +59,7 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
    float vx = x_state(2);
    float vy = x_state(3);
 
-   double z = px*px + py*py;
+   float z = px*px + py*py;
 
    if (std::abs(z) < 0.0001){
       return Jacobian;
