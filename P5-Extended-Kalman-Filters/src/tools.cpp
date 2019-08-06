@@ -23,9 +23,9 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
   rmse << 0,0,0,0;
 
  //Assertion
-  assert(estimations.size()!=0);
-  assert(ground_truth.size()!=0);
-  assert(estimations.size()==ground_truth.size());
+  if (estimations.size()!= ground_truth.size() || estimations.size() < 1){
+     return rmse;
+  }
 
  //accumulate 
  for (int i=0; i < estimations.size(); ++i){
@@ -52,8 +52,8 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
   //initialize
   MatrixXd Jacobian(3,4);
   Jacobian << 0,0,0,0,
-                            0,0,0,0,
-                            0,0,0,0;
+              0,0,0,0,
+              0,0,0,0;
 
    float px = x_state(0);
    float py = x_state(1);
@@ -62,7 +62,7 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 
    float z = px*px + py*py;
 
-   if (z == 0){
+   if (std::abs(z) < 0.00001){
       return Jacobian;
    }
    else {
