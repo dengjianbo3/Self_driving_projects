@@ -15,7 +15,6 @@ VectorXd Tools::CalculateRMSE(const vector<VectorXd> &estimations,
   /**
    * TODO: Calculate the RMSE here.
    */
-
   /**
    Initailizing vector containing 4 parameters 
    */
@@ -60,9 +59,9 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
    float vx = x_state(2);
    float vy = x_state(3);
 
-   float z = px*px + py*py;
+   double z = px*px + py*py;
 
-   if (std::abs(z) < 0.00001){
+   if (std::abs(z) < 0.0001){
       return Jacobian;
    }
    else {
@@ -70,8 +69,8 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
       Jacobian(0,1) = py/sqrt(z);
       Jacobian(1,0) = -py/z;
       Jacobian(1,1) = px/z;
-      Jacobian(2,0) = py*(vx*py - vy*px)/pow(z, 3/2);
-      Jacobian(2,1) = px*(vy*px - vx*py)/pow(z, 3/2);
+      Jacobian(2,0) = py*(vx*py - vy*px)/pow(z, 3.0/2.0);
+      Jacobian(2,1) = px*(vy*px - vx*py)/pow(z, 3.0/2.0);
       Jacobian(2,2) = px/sqrt(z);
       Jacobian(2,3) = py/sqrt(z);
    }

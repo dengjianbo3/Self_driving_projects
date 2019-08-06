@@ -36,7 +36,7 @@ void KalmanFilter::Update(const VectorXd &z) {
    * TODO: update the state by using Kalman Filter equations
    */
   VectorXd y_ = z - H_*x_;
-  MatrixXd S_ = H_*P_*H_.transpose();
+  MatrixXd S_ = H_*P_*H_.transpose() + R_;
   MatrixXd K_ = P_*H_.transpose()*S_.inverse();
 
   x_ = x_ + K_*y_;
@@ -55,10 +55,12 @@ double py = x_(1);
 double vx = x_(2);
 double vy = x_(3);
 
+double rho = sqrt(px*px + py*py);
+double phi = atan2(py,px);
+double rho_dot = (px*vx + py*vy)/sqrt(px*px+py*py);
+
 VectorXd h_x(3);
-h_x << sqrt(px*px+py*py),
-       atan(py/px),
-       (px*vx + py*vy)/sqrt(px*px+py*py);
+h_x << rho, phi, rho_dot;
 
 VectorXd y_(3);
 y_ = z - h_x;
@@ -71,7 +73,7 @@ if (y_(1) < -M_PI){
   y_(1) += 2*M_PI;
 }
 
-MatrixXd S_ = H_*P_*H_.transpose();
+MatrixXd S_ = H_*P_*H_.transpose() + R_;
 MatrixXd K_ = P_*H_.transpose()*S_.inverse();
 
 x_ = x_ + K_*y_;
