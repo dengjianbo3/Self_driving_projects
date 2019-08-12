@@ -30,8 +30,34 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
    * NOTE: Consult particle_filter.h for more information about this method 
    *   (and others in this file).
    */
-  num_particles = 0;  // TODO: Set the number of particles
 
+  num_particles = 100;  // TODO: Set the number of particles
+
+  std::normal_distribution<double> x_distribution(x, std[0]);
+  std::normal_distribution<double> y_distribution(y, std[1]);
+  std::normal_distribution<double> theta_distribution(theta, std[2]);
+  std::normal_distribution<double> noise(0.0, 0.1);
+
+  std::default_random_engine gen;  //random data generation
+
+  //particle generation
+  for (int i=0; i<num_particles; ++i){
+
+    double x_p = x_distribution(gen) + noise(gen);
+    double y_p = y_distribution(gen) + noise(gen);
+    double theta_p = theta_distribution(gen) + noise(gen);
+
+    particles[i].id = i;
+    particles[i].x = x_p;
+    particles[i].y = y_p;
+    particles[i].theta = theta_p;
+
+    weights[i] = 1.0;
+
+  }
+  is_initialized=true;
+
+  return;
 }
 
 void ParticleFilter::prediction(double delta_t, double std_pos[], 
@@ -43,7 +69,29 @@ void ParticleFilter::prediction(double delta_t, double std_pos[],
    *  http://en.cppreference.com/w/cpp/numeric/random/normal_distribution
    *  http://www.cplusplus.com/reference/random/default_random_engine/
    */
+  int particles_size = particles.size();
 
+  std::normal_distribution noise(0.0, 0.1);
+  std::default_random_engine gen;
+
+  for (int i; i<particles_size; ++i){
+    double x0 = particles[i].x;
+    double y0 = particles[i].y;
+    double theta0 = particles[i].theta;
+
+    double x_pred = x0 + (velocity/yaw_rate) * (sin(theta0+yaw_rate*delta_t) - sin(theta0));
+    double y_pred = y0 + (velocity/yaw_rate) * (cos(theta0) - cos(theta0+yaw_rate*delta_t));
+    double theta_pred = theta0 + yaw_rate*delta_t;
+
+    std::normal_distribution<double> x_distribution(x_pred, std_pos[0]);
+    std::normal_distribution<double> y_distribution(y_pred, std_pos[1]);
+    std::normal_distribution<double> theta_distribution(theta_pred, std_pos[2]);
+
+    particles[i].x = x_distribution(gen) + noise(gen);
+    particles[i].y = y_distribution(gen) + noise(gen);
+    particles[i].theta = theta_distribution(gen) + noise(gen);
+  }
+  return;
 }
 
 void ParticleFilter::dataAssociation(vector<LandmarkObs> predicted, 
@@ -56,7 +104,32 @@ void ParticleFilter::dataAssociation(vector<LandmarkObs> predicted,
    *   probably find it useful to implement this method and use it as a helper 
    *   during the updateWeights phase.
    */
+  for(int k=0; k<particles.size(); ++k){
 
+    vector<int> associate(2);
+
+    for (int i=0; i<predicted.size(); ++i){
+
+      double nearest_dist = 10000000;
+      double x = predicted[i].x;
+      double y = predicted[i].y;
+      double obs_x = 0.0;
+      double obs_y = 0.0;
+    
+      for (int j=0; j<observations.size(); ++j){
+        obs_x = observations[j].x;
+        obs_y = observations[j].y;
+        double distance = dist(x,y,obs_x,obs_y);
+        if (distance < nearest_dist){
+          nearest_dist = distance;
+          associate[0] = predicted[i].id;
+          associate[1] = observations[j].id;
+        }
+      }
+    }
+    particles[k].associations = associate;
+    return;
+  }
 }
 
 void ParticleFilter::updateWeights(double sensor_range, double std_landmark[], 
@@ -75,6 +148,34 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
    *   and the following is a good resource for the actual equation to implement
    *   (look at equation 3.33) http://planning.cs.uiuc.edu/node99.html
    */
+  //transform the observation coordinate
+  for (int i=0; i<particles.size(); ++i){
+    double w = 1.0;
+    double x_p = particles[i].x;
+    double y_p = particles[i].y;
+    double theta_p = particles[i].theta;
+
+    for (int j=0; j<observations.size(); ++j){
+      double x_c = observations[j].x;
+      double y_c = observations[j].y;
+      double x_m = x_p + x_c*cos(theta_p) - y_c*sin(theta_p);
+      double y_m = y_p + x_c*sin(theta_p) + y_c*cos(theta_p);
+      double sigma_x = std_landmark[0];
+      double sigma_y = std_landmark[1];
+      double mu_x;
+      double mu_y;
+      
+      double denominator = 2*M_PI*sigma_x*sigma_y;
+      double x_ = pow((x_m-mu_x),2)/(2*pow(sigma_x,2));
+      double y_ = pow((y_m-mu_y),2)/(2*pow(sigma_y,2));
+      double nominator = exp(-(x_+y_));
+      double p = nominator/denominator;
+      w *= p;
+    }
+
+    particles[i].weight = w;
+  }
+  
 
 }
 
