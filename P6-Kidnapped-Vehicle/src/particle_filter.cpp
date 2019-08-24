@@ -56,7 +56,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
     particles[i].x = x_p;
     particles[i].y = y_p;
     particles[i].theta = theta_p;
-    particles[i].weight = 1.0; //weight initialization
+    particles[i].weight = 1.0/num_particles; //weight initialization
   
   }
 
@@ -123,7 +123,7 @@ void ParticleFilter::dataAssociation(vector<LandmarkObs> predicted,
 
     double min_dist = std::numeric_limits<double>::max();
 
-    int map_id = -1;
+    int map_id;
 
     for (unsigned int j=0; j<predicted.size(); j++){
       double x_p = predicted[j].x;
@@ -176,10 +176,8 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
       int id_l = map_landmarks.landmark_list[l].id_i;
       
       double sensor_dist = dist(x_p,y_p, x_l,y_l);
-      double dx = x_p - x_l;
-      double dy = y_p - y_l;
 
-      if (dx*dx + dy*dy < sensor_range*sensor_range){
+      if (sensor_dist <= sensor_range){
         valid_landmarks.push_back(LandmarkObs{id_l, x_l, y_l});
       }
     }
@@ -219,24 +217,19 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
       double y_sigma = std_landmark[1];
       double w_new;
 
-      double denominator = 2*M_PI*x_sigma*y_sigma;
-
-      double nominator = exp(-(pow(x_obs-x_valid, 2)/(2*pow(x_sigma, 2)))+(pow(y_obs-y_valid, 2)/(2*pow(y_sigma, 2))));
-
       double x_d = x_obs - x_valid;
       double y_d = y_obs - y_valid;
+
       w_new = (1/(2*M_PI*x_sigma*y_sigma))*(exp(-((x_d*x_d)/(2*x_sigma*x_sigma) + (y_d*y_d)/(2*y_sigma*y_sigma))));
 
-
-      if (w_new < 0.00001){
-        particles[i].weight *= 0.00001;
+      
+      if (w_new < 0.000001){
+        particles[i].weight *= 0.000001;
       }
       else{
         particles[i].weight *= w_new;
       }
-
     }
-    
   }
   //normalize weight
   
@@ -249,9 +242,6 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
   for (int j=0; j<particles.size(); ++j){
     particles[j].weight /= sum_weight;
   }
-  
-  
-
 
 }
 
@@ -262,39 +252,52 @@ void ParticleFilter::resample() {
    * NOTE: You may find std::discrete_distribution helpful here.
    *   http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution
    */
-  vector<Particle> new_particles;
-  vector<double> weights;
-  double sum_w = 0;
-
-  //get new weights into vector
-  for (unsigned int i=0; i<particles.size(); ++i){
-    sum_w += particles[i].weight;
+  /*
+  vector<Particle> new_particles(num_particles);
+  vector<double> weights(num_particles);
+  for (unsigned int i=0; i<num_particles; ++i){
     weights.push_back(particles[i].weight);
   }
 
-  std::uniform_int_distribution<int> uni_int_dist(0, particles.size()-1);
+  std::random_device rd;
+
+  std::default_random_engine gen(rd());
+
+  for (unsigned int i=0; i<num_particles; ++i){
+    std::discrete_distribution<int> index(weights.begin(), weights.end());
+    new_particles[i] = particles[index(gen)];
+  }
+  particles = new_particles;
+  */
+ vector<double> weights;
+ double max_weight = std::numeric_limits<double>::min();
+
+ for (int i=0; i<num_particles; ++i){
+   weights.push_back(particles[i].weight);
+   if (particles[i].weight > max_weight){
+     max_weight = particles[i].weight;
+   }
+  }
   std::default_random_engine gen;
 
-  auto index = uni_int_dist(gen);
+  std::uniform_int_distribution<int> dist_int(0, num_particles-1);
+  std::uniform_real_distribution<float> dist_real(0.0, max_weight);
 
-  //max weight
-  double max_w = *max_element(weights.begin(), weights.end());
-
-  std::uniform_real_distribution<double> uni_real_dist(0.0, max_w);
+  int index = dist_int(gen);
 
   double beta = 0.0;
 
-  //spin
-  for (unsigned int k=0; k<particles.size(); ++k){
-    beta += uni_real_dist(gen)*2.0;
-    while (beta > weights[index]){
+  vector<Particle> new_particles;
+
+  for (int i=0; i<num_particles; ++i){
+    beta += dist_real(gen)*2.0;
+    while (beta>weights[index]){
       beta -= weights[index];
-      index = (index+1)%(particles.size());
+      index = (index+1) % num_particles;
     }
     new_particles.push_back(particles[index]);
   }
   particles = new_particles;
-  
 }
 
 void ParticleFilter::SetAssociations(Particle& particle, 
