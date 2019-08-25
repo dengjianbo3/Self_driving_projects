@@ -75,7 +75,7 @@ void ParticleFilter::prediction(double delta_t, double std_pos[],
 
   std::default_random_engine gen;
 
-  for (unsigned int i; i<particles.size(); ++i){
+  for (unsigned int i=0; i<particles.size(); ++i){
     //statements of last time step
     double x0 = particles[i].x;
     double y0 = particles[i].y;
