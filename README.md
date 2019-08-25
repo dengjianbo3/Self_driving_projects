@@ -36,3 +36,8 @@ predicted results wiht label
 ### P5 - Extended kalman filter
 [image6]: ./P5-Extended-Kalman-Filters/result.gif "extended kalman filter result"
 ![alt_text][image6]
+
+### P6 - Particle filter
+[image7]: ./P6-Kidnapped-Vehicle/particle_filter_result.gif "particle filter result"
+![alt_text][image7]
+
