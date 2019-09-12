@@ -227,11 +227,11 @@ int main() {
             }
 
             else if (lane == 1){
-              if (ref_vel < 49.5){
-                ref_vel += .3;
-              }
               //try to find a better lane
               if ((change_left) && (change_right)){
+                if (ref_vel < 49.5){
+                  ref_vel += .3;
+                }
                 if (left_front_min_dist > right_front_min_dist){
                   lane = 0;
                 }
@@ -240,10 +240,16 @@ int main() {
                 }  
               }
               
-              else if ((change_left)){        
+              else if ((change_left)){
+                if (ref_vel < 49.5){
+                  ref_vel += .3;
+                }        
                 lane = 0;             
               }
-              else if (change_right){            
+              else if (change_right){    
+                if (ref_vel < 49.5){
+                  ref_vel += .3;
+                }        
                 lane = 2;
               }
             }
