@@ -41,3 +41,6 @@ predicted results wiht label
 [image7]: ./P6-Kidnapped-Vehicle/particle_filter_result.gif "particle filter result"
 ![alt_text][image7]
 
+### P7 - Path planning
+Video recording at https://youtu.be/p_6Q_Mzp9BI
+
