@@ -137,10 +137,15 @@ My final model consisted of the following layers:
   My training setup is 
 
 batch size : 128
+
 epochs : 1000
+
 optimizer : Adam
+
 learning rate : 0.001
+
 loss function : cross entropy loss
+
 early stopping crateria : validation accuracy >= 98%
 
 
